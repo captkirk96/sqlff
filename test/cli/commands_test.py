@@ -836,6 +836,24 @@ def test__cli__command__fix(rule, fname):
         "2_files_with_lint_errors_1_unsuppressed_parse_error",
     ],
 )
+def test__cli__fix_command_disable_progress_bar_flag():
+    """Test that the --disable_progress_bar flag works with the fix command."""
+    result = invoke_assert_code(
+        ret_code=0,
+        args=[
+            fix,
+            [
+                "--dialect",
+                "ansi",
+                "--disable_progress_bar",
+                "--force",
+                "test/fixtures/cli/passing_a.sql",
+            ],
+        ],
+    )
+    # Check that no progress bar output is present
+    assert "100%" not in result.output
+    
 def test__cli__fix_error_handling_behavior(sql, fix_args, fixed, exit_code, tmpdir):
     """Tests how "fix" behaves wrt parse errors, exit code, etc."""
     if not isinstance(sql, list):
