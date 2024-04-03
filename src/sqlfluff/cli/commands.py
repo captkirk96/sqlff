@@ -40,7 +40,6 @@ from sqlfluff.core import (
     FluffConfig,
     SQLLintError,
     SQLTemplaterError,
-    SQLFluffUserError,
     dialect_selector,
     dialect_readout,
 )
@@ -144,7 +143,7 @@ class PathAndUserErrorHandler:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is SQLFluffUserError:
+        if exc_type is SQLTemplaterError:
             click.echo(
                 "\nUser Error: "
                 + self.formatter.colorize(
@@ -323,7 +322,7 @@ def get_config(
             # We're just making sure it exists at this stage.
             # It will be fetched properly in the linter.
             dialect_selector(kwargs["dialect"])
-        except SQLFluffUserError as err:
+        except SQLTemplaterError as err:
             click.echo(
                 OutputStreamFormatter.colorize_helper(
                     plain_output,
@@ -353,7 +352,7 @@ def get_config(
             overrides=overrides,
             **from_root_kwargs,
         )
-    except SQLFluffUserError as err:  # pragma: no cover
+    except SQLTemplaterError as err:  # pragma: no cover
         click.echo(
             OutputStreamFormatter.colorize_helper(
                 plain_output,
@@ -497,12 +496,12 @@ def dump_file_payload(filename: Optional[str], payload: str):
     ),
 )
 @click.option(
-    "--disable_progress_bar",
+    "--disable-progress-bar",
     "--disable-progress-bar",
     is_flag=True,
     help="Disables progress bars.",
     cls=DeprecatedOption,
-    deprecated=["--disable_progress_bar"],
+    deprecated=["--disable-progress-bar"],
 )
 @click.option(
     "--persist-timing",
